@@ -1,0 +1,102 @@
+{
+  "business_name": "Glow Haven Beauty Lounge",
+  "tagline": "Your glow, our craft.",
+  "location": "1st Floor, Valley Arcade Mall, Nairobi",
+  "operating_hours": "Monday – Sunday: 8:00 AM – 7:30 PM",
+  "contact_number": "+254 712 345 678",
+  "whatsapp_number": "+254 712 345 678",
+  "email": "info@glowhavenbeauty.co.ke",
+  "instagram": "@glowhavenbeautylounge",
+  "business_type": "Unisex Salon & Spa",
+  "brand_voice": "Friendly, professional, and customer-centric — focused on self-care and confidence.",
+  "about": "Glow Haven Beauty Lounge is a modern unisex salon offering hair, nail, and skincare services. Our goal is to make every client feel confident and refreshed.",
+  "booking_policy": {
+    "deposit_required": "30%",
+    "confirmation": "A 30% deposit confirms appointments.",
+    "cancellation_policy": "Cancellations must be made 6 hours in advance."
+  },
+  "payment_options": ["M-Pesa", "Visa", "Mastercard", "Cash"],
+  "promotions": [
+    {
+      "name": "Midweek Glow Deal",
+      "description": "Enjoy 15% off all hair and nail services every Tuesday & Wednesday.",
+      "valid_until": "2025-10-31",
+      "discount": "15%"
+    },
+    {
+      "name": "Refer & Shine",
+      "description": "Get KES 500 off your next visit when you refer a new client.",
+      "valid_until": "2025-10-31",
+      "credit": "KES 500"
+    },
+    {
+      "name": "Student Discount",
+      "description": "Show your student ID and enjoy 10% off all services.",
+      "valid_until": "Ongoing",
+      "discount": "10%"
+    },
+    {
+      "name": "Spa Day Duo",
+      "description": "Book any 2 treatments (Facial + Massage) and get 1 free add-on service.",
+      "valid_until": "2025-10-31",
+      "offer": "Free Add-on"
+    },
+    {
+      "name": "Birthday Treat",
+      "description": "Celebrate your birthday month with a complimentary manicure.",
+      "valid_until": "Ongoing",
+      "offer": "Free Service"
+    }
+  ],
+  "services": [
+    {
+      "category": "Hair Care",
+      "items": [
+        {"name": "Wash & Blow Dry", "duration": "45 mins", "price": 1000},
+        {"name": "Silk Press", "duration": "1 hr 15 mins", "price": 2000},
+        {"name": "Braiding (Medium)", "duration": "3 hrs", "price": 3500},
+        {"name": "Wig Installation", "duration": "1 hr", "price": 2500}
+      ]
+    },
+    {
+      "category": "Nail Care",
+      "items": [
+        {"name": "Classic Manicure", "duration": "45 mins", "price": 800},
+        {"name": "Gel Manicure", "duration": "1 hr", "price": 1200},
+        {"name": "Pedicure", "duration": "1 hr 15 mins", "price": 1500}
+      ]
+    },
+    {
+      "category": "Facial Treatments",
+      "items": [
+        {"name": "Express Facial", "duration": "30 mins", "price": 1200},
+        {"name": "Deep Cleansing Facial", "duration": "1 hr", "price": 2000},
+        {"name": "Anti-Aging Facial", "duration": "1 hr 15 mins", "price": 3000}
+      ]
+    },
+    {
+      "category": "Massage",
+      "items": [
+        {"name": "Swedish Massage", "duration": "1 hr", "price": 2800},
+        {"name": "Deep Tissue Massage", "duration": "1 hr 15 mins", "price": 3200},
+        {"name": "Aromatherapy Massage", "duration": "1 hr", "price": 3000}
+      ]
+    },
+    {
+      "category": "Makeup & Lashes",
+      "items": [
+        {"name": "Day Makeup", "duration": "45 mins", "price": 1800},
+        {"name": "Glam Makeup", "duration": "1 hr 15 mins", "price": 2800},
+        {"name": "Lash Extension (Classic)", "duration": "1 hr 30 mins", "price": 3500}
+      ]
+    },
+    {
+      "category": "Waxing",
+      "items": [
+        {"name": "Underarm Wax", "duration": "20 mins", "price": 700},
+        {"name": "Full Leg Wax", "duration": "45 mins", "price": 1800},
+        {"name": "Brazilian Wax", "duration": "45 mins", "price": 2000}
+      ]
+    }
+  ]
+}
