@@ -1,106 +1,63 @@
-Glow Haven Beauty Lounge – WhatsApp AI Assistant + FastAPI Backend
+# Glow Haven Beauty Lounge – WhatsApp AI Assistant + FastAPI Backend
 
-A FastAPI backend integrated with a WhatsApp chatbot that helps Glow Haven Beauty Lounge customers seamlessly book appointments, make payments, and receive receipts — powered by OpenAI, Twilio, and MCP tools.
+A FastAPI backend with a WhatsApp chatbot that helps users:
 
-✨ Features
+- Create and check bookings  
+- Optionally initiate M-Pesa STK push and auto-send PDF receipts  
+- Persist short-term chat memory per WhatsApp user  
+- Expose MCP tools the LLM can call to interact with your API  
+- Optional Google Calendar sync for bookings  
 
-💬 WhatsApp Chatbot (Twilio + OpenAI)
+## Features
+- **Booking API:** create/list/get bookings  
+- **WhatsApp webhook (Twilio):** async bot with MCP tool calls  
+- **Payments (optional):** STK push, status polling, receipt generation, WhatsApp notification  
+- **Google Calendar (optional):** auto-create and backfill events  
+- **Developer-friendly:** auto table creation on startup  
 
-Handles customer queries, bookings, and feedback
+## Tech Stack
+FastAPI, SQLAlchemy, SQLite (dev), Twilio WhatsApp, OpenAI (chat + tools), MCP tools (HTTP client), ReportLab (PDF), Optional Google Calendar API
 
-Maintains short-term chat memory per user
-
-Calls FastAPI endpoints through MCP tools
-
-📅 Booking API
-
-Create, list, and retrieve bookings
-
-Optional Google Calendar sync
-
-💰 Payment Integration (Optional)
-
-M-Pesa STK Push initiation
-
-Payment status polling and receipts
-
-Auto WhatsApp receipt notification
-
-🧾 PDF Receipt Generation
-
-Automatically created and stored upon successful payment
-
-🧠 LLM Tooling
-
-The OpenAI model uses MCP tools to call your FastAPI endpoints
-
-🔧 Dev-Friendly
-
-Tables auto-created on startup
-
-Optional integrations (Google Calendar, M-Pesa) can be disabled in dev
-
-🧱 Tech Stack
-Category	Tools
-Backend	FastAPI, SQLAlchemy, SQLite
-Messaging	Twilio WhatsApp API
-AI/LLM	OpenAI GPT (via chat_with_bot)
-Automation	MCP Tools
-Documents	ReportLab (PDF)
-Optional	Google Calendar API, M-Pesa Daraja
-📂 Project Structure
+## Project Structure
+```
 app/
 ├── main.py
 ├── database.py
-├── models.py          # SQLAlchemy models
-├── schemas.py         # Pydantic I/O models
-│
+├── models.py
+├── schemas.py
 ├── api/
 │   ├── bookings.py
 │   ├── services.py
 │   ├── payments.py
 │   ├── receipts.py
 │   └── feedback.py
-│
 ├── whatsapp/
 │   ├── webhook.py
 │   ├── bot.py
 │   ├── client.py
-│   └── memory.py      # (for chat memory)
-│
+│   └── memory.py
 ├── mcp_server/
 │   └── tools.py
-│
 └── utils/
     ├── mpesa.py
     └── pdf_generator.py
+```
 
-🚀 Getting Started
-1️⃣ Requirements
+## Getting Started
 
-Python 3.11+
+### 1) Requirements
+- Python 3.11+  
+- Twilio account (for WhatsApp)  
+- OpenAI API key  
+- Optional: M-Pesa Daraja credentials, Google Calendar credentials  
 
-Virtual environment or Docker
-
-Twilio account (for WhatsApp)
-
-OpenAI API key
-
-(Optional) M-Pesa Daraja credentials
-
-(Optional) Google service account credentials for Calendar
-
-2️⃣ Installation
-# Create and activate venv
-python -m venv venv
-source venv/bin/activate
-
-# Install dependencies
+### 2) Installation
+```bash
 pip install -r requirements.txt
+```
 
-
-If missing, create a requirements.txt similar to:
-
+If missing, create a `requirements.txt` with:
+```
 fastapi
 uvicorn[standard]
 sqlalchemy
@@ -114,11 +71,11 @@ google-api-python-client
 google-auth
 google-auth-httplib2
 google-auth-oauthlib
+```
 
-3️⃣ Environment Variables
-
-Create a .env file in the project root:
-
+### 3) Environment Variables
+Create a `.env` file in your project root:
+```
 OPENAI_API_KEY=sk-...
 DATABASE_URL=sqlite:///./glow_haven.db
 TWILIO_ACCOUNT_SID=...
@@ -134,155 +91,69 @@ MPESA_PASSKEY=...
 MPESA_CALLBACK_URL=https://your-public-domain/api/payments/callback
 
 # Optional Google Calendar
-GOOGLE_APPLICATION_CREDENTIALS=/absolute/path/to/google_cred.json
+GOOGLE_APPLICATION_CREDENTIALS=/path/to/google_cred.json
 GOOGLE_CALENDAR_ID=your_calendar_id@group.calendar.google.com
 GOOGLE_CALENDAR_TIMEZONE=Africa/Nairobi
+```
 
-4️⃣ Run Locally
+### 4) Run Locally
+```bash
 uvicorn app.main:app --host 0.0.0.0 --port 9000
+```
 
+Docs: [http://localhost:9000/docs](http://localhost:9000/docs)
 
-Docs: http://localhost:9000/docs
+### 5) Configure Twilio Webhook
+Set webhook URL in Twilio console to:  
+`POST https://your-domain/whatsapp/webhook`
 
-Health: http://localhost:9000/
+In dev, use ngrok to tunnel your localhost.
 
-Tables are auto-created on startup.
+---
 
-5️⃣ Configure Twilio WhatsApp Webhook
+## API Overview
+Base path: `/api`
 
-Set your webhook URL:
+### Services
+- `GET /api/services/`
+- `GET /api/services/list`
 
-POST https://<your-public-domain>/whatsapp/webhook
+### Bookings
+- `POST /api/bookings/create`
+- `GET /api/bookings/list`
+- `GET /api/bookings/{booking_id}`
+- `POST /api/bookings/sync_calendar` *(optional)*
 
+### Payments (optional)
+- `POST /api/payments/stkpush`
+- `GET /api/payments/status/{booking_id}`
+- `POST /api/payments/callback`
 
-Twilio sends:
+### Receipts
+- `POST /api/receipts/generate/{booking_id}`
 
-From
+### WhatsApp Webhook
+- `POST /whatsapp/webhook`
 
-Body
+---
 
-In development, expose your server via ngrok and configure the webhook in your Twilio sandbox.
+## WhatsApp Bot Behavior
+`chat_with_bot` in `whatsapp/bot.py` handles user sessions:  
+- Maintains per-user memory  
+- Uses OpenAI to call MCP tools  
+- System prompt guides conversation flow  
 
-🔌 API Overview
+---
 
-Base Path: /api
+## MCP Tools
+Defined in `mcp_server/tools.py`, includes:
+- `get_services`
+- `get_business_info`
+- `get_user_bookings`
+- `create_booking`
+- `initiate_payment`
+- `poll_payment_status`
+- `generate_receipt`
+- `submit_feedback`
 
-📋 Services
-GET /api/services/
-GET /api/services/list
 
-📅 Bookings
-POST /api/bookings/create
-GET /api/bookings/list
-GET /api/bookings/{booking_id}
-POST /api/bookings/sync_calendar   # optional
-
-💰 Payments (optional)
-POST /api/payments/stkpush
-GET /api/payments/status/{booking_id}
-POST /api/payments/callback
-
-
-On success, generates a PDF receipt and sends WhatsApp confirmation.
-
-🧾 Receipts
-POST /api/receipts/generate/{booking_id}
-
-💬 WhatsApp Webhook
-POST /whatsapp/webhook
-
-🤖 WhatsApp Bot Behavior
-
-Implemented in whatsapp/bot.py:
-
-Maintains per-user memory (via memory.py)
-
-Uses OpenAI LLM + MCP tools
-
-Calculates 30% deposit for bookings
-
-Calls tools like:
-
-create_booking
-
-initiate_payment
-
-generate_receipt
-
-🛠 MCP Tools
-
-Defined in mcp_server/tools.py — the bridge between LLM and backend APIs.
-
-Example tools:
-
-get_services
-
-create_booking
-
-initiate_payment
-
-generate_receipt
-
-submit_feedback
-
-Set API_BASE_URL in .env so MCP knows where to call your backend.
-
-💳 Payment Flow (Optional)
-
-User confirms booking.
-
-Bot calculates 30% deposit.
-
-Bot calls initiate_payment.
-
-M-Pesa sends STK Push.
-
-On callback success:
-
-Booking → marked as paid
-
-Receipt → generated (PDF)
-
-WhatsApp → confirmation sent
-
-🗓 Google Calendar Integration (Optional)
-
-Auto-adds bookings as calendar events.
-
-Backfill missing ones via:
-
-POST /api/bookings/sync_calendar
-
-
-To grant access:
-
-Share your calendar with the service account email.
-
-Permission: “Make changes to events.”
-
-⚙️ Deployment
-
-You can deploy via:
-
-Render (Dockerized build)
-
-Railway
-
-Docker Hub + Render combo
-
-Example build command:
-
-docker build -t glow-haven:latest .
-docker run -p 9000:9000 glow-haven
-
-🧩 Future Improvements
-
-Add secure user authentication for admin panel
-
-Connect to live M-Pesa STK Push
-
-Enable persistent memory via Redis or Supabase
-
-Add email/SMS notifications for confirmed bookings
-
-Fine-tune conversation flow with WhatsApp interactive buttons
