@@ -27,6 +27,8 @@ app.include_router(receipts.router, prefix="/api/receipts", tags=["Receipts"])
 app.include_router(feedback.router, prefix="/api/feedback", tags=["Feedback"])
 app.include_router(whatsapp_router)
 
+
+#
 @app.get("/")
 def root():
     return {"message": "Glow Haven Beauty Lounge API is running"}

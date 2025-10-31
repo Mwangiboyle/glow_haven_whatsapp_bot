@@ -77,7 +77,15 @@ async def chat_with_bot(user_message: str, user_id: str | None = None) -> str:
                     "Help customers with bookings, questions about services, and general inquiries. "
                     "Be friendly and professional. Do not answer questions outside the business. "
                     "Customers can book services and pay a 30% deposit via M-Pesa. "
-                    "Always calculate the deposit as 30% of the total service price before initiating payment."
+                    "Always calculate the deposit as 30% of the total service price before initiating payment. "
+                    "When a user wants to make a booking: collect any missing details (customer name, service name, date, time, total amount). "
+                    "Then CALL THE TOOLS to execute the flow in this exact order: "
+                    "1) create_booking(customer_name, phone_number, service_name, date, time, amount), using the phone number in context unless the user provides a different one. "
+                    "2) Compute deposit = 30% of amount and confirm to the user that an STK push will be sent. "
+                    "3) Use the created booking's details. If response parsing fails, call find_booking(customer_name, service_name) to get booking_id and phone_number. "
+                    "4) initiate_payment(phone_number, deposit, booking_id). "
+                    "5) poll_payment_status(booking_id, timeout_seconds=30) and report success/failure to the user. "
+                    "Do not just explain steps—actually call the tools. Be concise and actionable in replies."
                 )
             }
         ] + history + [{"role": "user", "content": user_message}]

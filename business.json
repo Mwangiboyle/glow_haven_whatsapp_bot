@@ -63,7 +63,8 @@
       "items": [
         {"name": "Classic Manicure", "duration": "45 mins", "price": 800},
         {"name": "Gel Manicure", "duration": "1 hr", "price": 1200},
-        {"name": "Pedicure", "duration": "1 hr 15 mins", "price": 1500}
+        {"name": "Pedicure", "duration": "1 hr 15 mins", "price": 1500},
+        {"name": "Toe Care", "duration": "1 hr 15 mins", "price": 300}
       ]
     },
     {

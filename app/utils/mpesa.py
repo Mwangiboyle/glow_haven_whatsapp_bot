@@ -14,7 +14,7 @@ MPESA_PASSKEY = os.getenv("MPESA_PASSKEY")
 MPESA_ENV = os.getenv("MPESA_ENV", "sandbox")
 MPESA_CALLBACK_URL = os.getenv(
     "MPESA_CALLBACK_URL",
-    "https://your-ngrok-url.ngrok-free.app/api/payments/callback"
+    "https://10ad98e5ed65.ngrok-free.app/api/payments/callback"
 )
 
 MPESA_BASE_URL = (

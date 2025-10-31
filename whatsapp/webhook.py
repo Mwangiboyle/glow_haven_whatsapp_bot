@@ -34,7 +34,7 @@ async def whatsapp_webhook(
         asyncio.create_task(_process_and_reply(user_number, user_message))
 
         # Immediately acknowledge to Twilio
-        return PlainTextResponse("OK", status_code=200)
+        #return PlainTextResponse("OK", status_code=200)
 
     except Exception as e:
         logger.exception("Webhook error")

@@ -7,6 +7,9 @@ from app.schemas import Payment, Booking
 from app.models import PaymentCreate, PaymentResponse
 from app.utils.mpesa import initiate_stk_push
 from datetime import datetime
+from app.utils.pdf_generator import generate_receipt_pdf
+from whatsapp.client import send_whatsapp_message
+import os
 
 router = APIRouter(prefix="/api/payments", tags=["Payments"])
 
@@ -39,6 +42,27 @@ async def stk_push(payment_data: PaymentCreate, db: Session = Depends(get_db)):
     return payment
 
 
+@router.get("/status/{booking_id}")
+def payment_status(booking_id: int, db: Session = Depends(get_db)):
+    payment = (
+        db.query(Payment)
+        .filter(Payment.booking_id == booking_id)
+        .order_by(Payment.created_at.desc())
+        .first()
+    )
+    if not payment:
+        return {"status": "not_found", "booking_id": booking_id}
+    booking = db.query(Booking).filter(Booking.id == booking_id).first()
+    return {
+        "status": payment.status,
+        "transaction_id": payment.transaction_id,
+        "booking_id": booking_id,
+        "booking_status": booking.status if booking else None,
+        "amount": payment.amount,
+        "phone_number": payment.phone_number,
+        "created_at": payment.created_at.isoformat() if payment.created_at else None,
+    }
+
 @router.post("/callback")
 async def mpesa_callback(request: Request, db: Session = Depends(get_db)):
     data = await request.json()
@@ -68,6 +92,23 @@ async def mpesa_callback(request: Request, db: Session = Depends(get_db)):
             if booking:
                 booking.status = "paid"
             db.commit()
+            # Generate receipt and notify customer via WhatsApp
+            try:
+                if booking:
+                    filename = generate_receipt_pdf(booking, payment)
+                    file_path = os.path.abspath(filename)
+                    message = (
+                        f"Payment received successfully.\n"
+                        f"Booking ID: {booking.id}\n"
+                        f"Service: {booking.service_name}\n"
+                        f"Amount Paid: KES {payment.amount}\n"
+                        f"Receipt: {file_path}"
+                    )
+                    # send WhatsApp message (async-friendly wrapper)
+                    await send_whatsapp_message(phone, message)
+            except Exception:
+                # Continue even if sending the WhatsApp message fails
+                pass
         return {"ResultCode": 0, "ResultDesc": "Accepted"}
     else:
         return {"ResultCode": 1, "ResultDesc": "Failed"}
