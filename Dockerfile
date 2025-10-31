@@ -1,3 +1,4 @@
+
 # syntax=docker/dockerfile:1
 FROM python:3.11-slim
 
@@ -5,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1
 
-# System deps for reportlab (PDF) and general build
+# System dependencies (for PDF generation, etc.)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gcc \
@@ -15,20 +16,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Install Python deps
-COPY requirements.txt /app/requirements.txt
-RUN pip install --upgrade pip && pip install -r /app/requirements.txt
+# Copy dependency file
+COPY requirements.txt .
 
-# Copy project
-COPY . /app
+# Install dependencies
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+# Copy application code
+COPY . .
+
+# Copy environment variables file
+COPY .env /app/.env
 
 # Expose FastAPI port
 EXPOSE 9000
 
-# Default environment (override in docker run or compose)
-# ENV OPENAI_API_KEY=...
-# ENV DATABASE_URL=sqlite:///./glow_haven.db
-# ENV API_BASE_URL=http://localhost:9000/api
+# Load .env automatically (using python-dotenv)
+# and run the app
+CMD ["bash", "-c", "source /app/.env && uvicorn app.main:app --host 0.0.0.0 --port 9000"]
 
-# Run FastAPI on 0.0.0.0:9000
-CMD ["uvicorn", "app.main:app", "--port", "9000"]
