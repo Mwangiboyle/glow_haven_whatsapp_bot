@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zlib1g-dev \
   && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+WORKDIR /app2
 
 # Copy dependency file
 COPY requirements.txt .
@@ -26,7 +26,7 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 COPY . .
 
 # Copy environment variables file
-COPY .env /app/.env
+COPY .env /app2/.env
 
 # Expose FastAPI port
 EXPOSE 9000
